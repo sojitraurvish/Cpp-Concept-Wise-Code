@@ -1,0 +1,111 @@
+#include<iostream>
+#include<string.h>
+#include<fstream>
+using namespace std;
+class Person
+{
+	private:
+	char name[20],city[20];
+	int age;
+	public:
+	Person()
+	{
+		strcpy(name,"");
+		strcpy(city,"");
+		age=0;
+	}
+	Person(char *n,char *c,int a)
+	{
+		strcpy(name,n);
+		strcpy(city,c);
+		age=a;
+	}	
+	int getage(){
+		return age;
+	}
+	void display()
+	{
+		cout<<"Name:"<<name<<endl;
+		cout<<"City:"<<city<<endl;
+		cout<<"Age:"<<age<<endl;
+	}
+	void save(ofstream &out)
+	{
+		out.write(name,20);
+		out.write(city,20);
+		out.write((char *) &age,sizeof(age));
+	}
+	void load(ifstream &in)
+	{
+		in.read(name,20);
+		in.read(city,20);
+		in.read((char *) &age,sizeof(age));
+	}
+
+	void input()
+	{
+	cout<<"Enter Your Name:"; cin>>name;
+	cout<<"Enter Your City:"; cin>>city;
+	cout<<"Enter Your Age:"; cin>>age;
+	}
+};
+int main()
+{
+//Person p1("Darshan Prajapati", "Surat", 20);
+//write file
+Person p1;
+int searchage;
+ofstream outfile;
+ifstream infile;
+int choice;
+do{
+//menu
+cout<<"================================="<<endl;
+cout<<"1.WriteFile\n2.Read File\n3.Search\n"<<endl;
+cout<<"================================="<<endl;
+cout<<"Enter your choice";cin>>choice;
+switch (choice){
+case 1:
+	outfile.open("person.dat",ios::binary|ios::app);
+	if(!outfile)
+		cout<<"file not created";
+	p1.input();
+	p1.save(outfile);
+	outfile.close();
+	break;
+case 2:
+	infile.open("person.dat",ios::binary );
+	if(!infile)
+		cout<<"file not oppend";
+	//p1.save(outfile);
+	while(infile){
+		p1.load(infile);
+		if(infile.fail())
+			break;
+		p1.display();
+	}
+	infile.close();
+	break;
+case 3:
+	infile.open("person.dat",ios::binary );
+	if(!infile)
+		cout<<"file not oppend";
+	//p1.save(outfile);
+	cout<<"enter age you want to search";
+	cin>>searchage;
+	while(infile){
+		p1.load(infile);
+		if(infile.fail())
+			break;
+		if(p1.getage()==searchage)
+			p1.display();
+	}
+	infile.close();
+	break;
+default:
+	choice=0;
+	break;
+}
+}while(choice);
+return 0;
+}
